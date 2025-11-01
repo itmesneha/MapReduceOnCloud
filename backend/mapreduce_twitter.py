@@ -9,9 +9,14 @@ def get_spark_context():
     global _spark_context
     if _spark_context is None:
         # Configure Spark for S3 access
-        os.environ["PYSPARK_SUBMIT_ARGS"] = "--jars /opt/spark/jars/hadoop-aws-3.3.4.jar,/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar pyspark-shell"
-        
         conf = SparkConf().setAppName("TwitterFollowerCount")
+        
+        # Set JARs on the classpath
+        jar_path = "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
+        conf.set("spark.driver.extraClassPath", jar_path)
+        conf.set("spark.executor.extraClassPath", jar_path)
+        
+        # Configure S3A filesystem
         conf.set("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         conf.set("spark.hadoop.fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")
         
