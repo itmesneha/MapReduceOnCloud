@@ -45,13 +45,6 @@ jobs:
         echo "✅ SSH key configured"
         ssh-keyscan -H 18.138.254.59 >> ~/.ssh/known_hosts
         
-        echo "✅ SSH key configured" 
-        ssh-keyscan -H 18.138.254.59 >> ~/.ssh/known_hosts
-        
-        # Deploy to EC2
-        echo "🚀 Starting deployment..."
-        ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no -o ConnectTimeout=30 ubuntu@18.138.254.59 << 'ENDSSH'
-          
         # Deploy to EC2
         echo "🚀 Starting deployment..."
         ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no -o ConnectTimeout=30 ubuntu@18.138.254.59 << 'ENDSSH'
