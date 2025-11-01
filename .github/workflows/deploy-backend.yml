@@ -45,7 +45,7 @@ jobs:
         echo "✅ SSH key configured"
         ssh-keyscan -H 18.138.254.59 >> ~/.ssh/known_hosts
         
-        echo "✅ SSH key configured"
+        echo "✅ SSH key configured" 
         ssh-keyscan -H 18.138.254.59 >> ~/.ssh/known_hosts
         
         # Deploy to EC2
