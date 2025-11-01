@@ -1,10 +1,11 @@
 # Use lightweight base with Java (needed for PySpark)
 FROM python:3.11-slim
 
-# Install Java (required by PySpark)
+# Install Java (required by PySpark) and curl (for health checks)
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    openjdk-21-jre-headless && \
+    openjdk-21-jre-headless \
+    curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
