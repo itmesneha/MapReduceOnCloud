@@ -11,12 +11,7 @@ def get_spark_context():
         # Configure Spark for S3 access
         conf = SparkConf().setAppName("TwitterFollowerCount")
         
-        # Set JARs on the classpath
-        jar_path = "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
-        conf.set("spark.driver.extraClassPath", jar_path)
-        conf.set("spark.executor.extraClassPath", jar_path)
-        
-        # Configure S3A filesystem
+        # Configure S3A filesystem with anonymous access (bucket is public)
         conf.set("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         conf.set("spark.hadoop.fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")
         

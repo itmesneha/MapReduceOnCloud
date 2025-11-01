@@ -15,25 +15,21 @@ ENV PATH="${JAVA_HOME}/bin:${PATH}"
 # Set working directory
 WORKDIR /app
 
-# Download Hadoop AWS JARs for S3 access
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wget && \
-    mkdir -p /opt/spark/jars && \
-    wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar -O /opt/spark/jars/hadoop-aws-3.3.4.jar && \
-    wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar -O /opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar && \
-    apt-get remove -y wget && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set Spark to use the JARs
-ENV SPARK_HOME=/opt/spark
-ENV PYSPARK_SUBMIT_ARGS="--jars /opt/spark/jars/hadoop-aws-3.3.4.jar,/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar pyspark-shell"
-
 # Copy dependencies first (for better caching)
 COPY requirements.txt .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Download Hadoop AWS JARs and copy them to PySpark's jars directory
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wget && \
+    PYSPARK_JARS_DIR=$(python -c "import pyspark; import os; print(os.path.join(os.path.dirname(pyspark.__file__), 'jars'))") && \
+    wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar -O ${PYSPARK_JARS_DIR}/hadoop-aws-3.3.4.jar && \
+    wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar -O ${PYSPARK_JARS_DIR}/aws-java-sdk-bundle-1.12.262.jar && \
+    apt-get remove -y wget && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy backend source
 COPY . .
