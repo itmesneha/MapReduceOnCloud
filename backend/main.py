@@ -15,7 +15,8 @@ app.add_middleware(
 
 @app.get("/user/{user_id}")
 def get_user_stats(user_id: str):
-    file_path = "twitter_combined.txt"  # Local path
+    # Use S3 path - the mapreduce_twitter function will handle it
+    file_path = "s3a://sneha-lab1-photo-public/twitter_combined.txt"
     results = mapreduce_twitter(file_path)
     if user_id in results:
         return {

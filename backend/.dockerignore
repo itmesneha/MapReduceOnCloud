@@ -41,3 +41,6 @@ logs/
 # Docker
 Dockerfile
 .dockerignore
+
+# Large datasets (now in S3)
+twitter_combined.txt

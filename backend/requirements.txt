@@ -3,3 +3,4 @@ uvicorn
 pyspark==3.5.3
 boto3
 psutil
+hadoop-aws==3.3.4

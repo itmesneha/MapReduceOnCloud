@@ -1,4 +1,5 @@
 from pyspark import SparkContext
+import os
 
 # Global SparkContext instance (singleton pattern)
 _spark_context = None
@@ -12,6 +13,13 @@ def get_spark_context():
 
 def mapreduce_twitter(file_path: str):
     sc = get_spark_context()
+    
+    # Support both local files and S3 paths
+    # If file_path doesn't start with s3://, treat it as local
+    if not file_path.startswith("s3://"):
+        # Check if AWS credentials are available for S3
+        s3_bucket = os.environ.get("S3_BUCKET", "sneha-lab1-photo-public")
+        file_path = f"s3a://{s3_bucket}/twitter_combined.txt"
 
     # Each line: userA userB → userA follows userB
     data = sc.textFile(file_path)
