@@ -105,6 +105,13 @@ jobs:
           echo "🛑 Stopping existing containers..."
           sudo docker-compose down 2>/dev/null || echo "No existing containers to stop"
           
+          # Wait for any apt locks before building (Docker build might need apt)
+          echo "⏳ Ensuring no apt locks before building..."
+          while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 ; do
+            echo "Waiting for apt lock..."
+            sleep 3
+          done
+          
           echo "🔨 Building Docker image..."
           sudo docker-compose build --no-cache
           

@@ -3,7 +3,8 @@ FROM python:3.11-slim
 
 # Install Java (required by PySpark)
 RUN apt-get update && \
-    apt-get install -y openjdk-17-jre-headless && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    openjdk-17-jre-headless && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
