@@ -7,6 +7,8 @@ Your MapReduce application is now fully deployed on AWS!
 ### Frontend (S3 Static Website)
 **Website URL:** http://sneha-lab1-photo-public.s3-website-ap-southeast-1.amazonaws.com/frontend/index.html
 
+⚠️ **Important:** Use the HTTP URL above, not the HTTPS S3 URL. The backend is HTTP-only, and browsers block mixed content (HTTPS frontend calling HTTP API).
+
 ### Backend (EC2)
 **API Documentation:** http://18.138.254.59:8000/docs
 **API Endpoint:** http://18.138.254.59:8000
