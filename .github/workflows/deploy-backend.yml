@@ -24,12 +24,46 @@ jobs:
       run: |
         # Setup SSH
         mkdir -p ~/.ssh
+        
+        # Check if secret is set
+        if [ -z "$EC2_SSH_KEY" ]; then
+          echo "❌ ERROR: EC2_SSH_KEY secret is not set!"
+          echo "Please add your SSH private key to GitHub Secrets:"
+          echo "https://github.com/itmesneha/MapReduceOnCloud/settings/secrets/actions"
+          exit 1
+        fi
+        
         echo "$EC2_SSH_KEY" > ~/.ssh/ec2_key.pem
         chmod 600 ~/.ssh/ec2_key.pem
+        
+        # Verify key file
+        if [ ! -s ~/.ssh/ec2_key.pem ]; then
+          echo "❌ ERROR: SSH key file is empty!"
+          exit 1
+        fi
+        
+        echo "✅ SSH key configured"
         ssh-keyscan -H 18.138.254.59 >> ~/.ssh/known_hosts
         
+        echo "✅ SSH key configured"
+        ssh-keyscan -H 18.138.254.59 >> ~/.ssh/known_hosts
+        
+        # Test SSH connection
+        echo "🔍 Testing SSH connection..."
+        if ! ssh -i ~/.ssh/ec2_key.pem -o ConnectTimeout=10 -o StrictHostKeyChecking=no ubuntu@18.138.254.59 "echo '✅ SSH connection successful'"; then
+          echo "❌ ERROR: Cannot connect to EC2 instance"
+          echo "Possible issues:"
+          echo "  1. Wrong SSH key in EC2_SSH_KEY secret"
+          echo "  2. EC2 instance is stopped or not accessible"
+          echo "  3. Security group doesn't allow SSH from GitHub Actions"
+          exit 1
+        fi
+        
         # Deploy to EC2
-        ssh -i ~/.ssh/ec2_key.pem ubuntu@18.138.254.59 << 'ENDSSH'
+        echo "🚀 Starting deployment..."
+        ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no ubuntu@18.138.254.59 << 'ENDSSH'
+          set -e  # Exit on any error
+          
           # Check if repo exists, if not clone it
           if [ ! -d ~/MapReduceOnCloud ]; then
             echo "📥 Cloning repository..."
