@@ -1,7 +1,7 @@
 from pyspark import SparkContext, SparkConf
 import os
 
-# Global SparkContext instance (singleton pattern)
+# Global SparkContext instance (singleton pattern) - necessary!!
 _spark_context = None
 
 def get_spark_context():
